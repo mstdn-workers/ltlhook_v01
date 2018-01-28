@@ -1,0 +1,37 @@
+version: '2'
+services:
+
+  ltl-hook-data:
+    image: busybox
+    container_name: "ltl-hook-data"
+    volumes:
+      - "./django/ltlhook:/usr/src/app"
+
+  get-streem:
+    build: ./get_streem
+    image: get-streem
+    volumes_from:
+      - "ltl-hook-data"
+    working_dir: "/usr/src/app"
+    command: python main.py
+    tty: true
+    restart: always
+
+  ltl-srv-reg-web:
+    build: ./django
+    image: ltl-srv-reg-web
+    ports:
+      - "80"
+    environment:
+      VIRTUAL_HOST: hook.h1de.tech
+      VIRTUAL_PORT: '80'
+    volumes_from:
+      - "ltl-hook-data"
+    working_dir: "/usr/src/app"
+    command: "gunicorn ltlhook.wsgi:application -b 0.0.0.0:80"
+    restart: always
+
+networks:
+  default:
+    external:
+      name: common_link

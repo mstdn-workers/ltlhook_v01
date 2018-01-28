@@ -1,0 +1,49 @@
+<head>
+<script type="text/javascript"><!--
+function check () {
+  var userName = document.registrationForm.username.value;
+  var url = document.registrationForm.url.value;
+  if ( url == "" ) {
+    alert ( "URLを入力して下さい。" );
+    document.registrationForm.url.focus();
+    return false;
+  }
+  if ( userName == "" ) {
+    alert ( "ユーザ名を入力して下さい。" );
+    document.registrationForm.username.focus();
+    return false;
+  }
+  if (url.indexOf("https://")) {
+    alert ( "「https://」から始まるURLを入力して下さい。" );
+    document.registrationForm.url.focus();
+    return false;
+  }
+  return true;
+}
+//--></script>
+</head>
+
+
+<h2>丼Hook登録ページ</h2>
+
+<p>Hook先URLと連絡先のユーザ名を入力してください。</p>
+
+<p>登録後、Hook時に付与されるsecretが表示されます。<br />
+受信時の突き合わせ確認にご利用ください。</p>
+
+<br />
+<form action="{% url 'registr:result' %}" method="post" name="registrationForm" onSubmit="return check();">
+  {% csrf_token %}
+  Hook先URL:<input type="text" name="url"><br />
+  ユーザ名：<input type="text" name="username"><br />
+  <input type="submit" value="登録">
+</ul>
+</form>
+<br />
+<hr>
+<p>以下のデータがPOSTがされます。</p>
+<p>
+  event: updateもしくはdeleteを返します。<br />
+  id: tootのidを返します。<br />
+  secret: 登録後画面に表示されるsecretと同じ値を返します。<br />
+</p>
